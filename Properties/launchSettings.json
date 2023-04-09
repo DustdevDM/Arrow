@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DND-DC-Music-Bot": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\Coding\\Projects\\DND-DC-Music-Bot\\.env\""
+    }
+  }
+}
