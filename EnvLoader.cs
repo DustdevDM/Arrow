@@ -15,7 +15,7 @@ namespace DND_DC_Music_Bot
             {
                 var parts = line.Split(
                     '=',
-                    StringSplitOptions.RemoveEmptyEntries);
+                    StringSplitOptions.RemoveEmptyEntries);sdfs
 
                 if (parts.Length != 2)
                     continue;
