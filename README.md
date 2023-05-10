@@ -2,7 +2,7 @@
     <img src="./assets/Arrow Banner.png" width="100%" />
     <h1>Arrow-アロー</h1>
     <strong>
-        A Dungeons & Dragons music bot for Gamemasters that plays atmospheric music on command.
+        A Dungeons & Dragons music bot for Dungeon Masters that plays atmospheric music on command.
     </strong><br><br>
     <a href="https://discordnet.dev/"><img height="28" src="./assets/made-with-discord.net.svg" /></a>&nbsp;
 	<img height="28" src="./assets/works-on-my-machine.svg" />&nbsp;	    
