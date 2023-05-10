@@ -7,6 +7,7 @@
     <a href="https://discordnet.dev/"><img height="28" src="./assets/made-with-discord.net.svg" /></a>&nbsp;
 	<img height="28" src="./assets/works-on-my-machine.svg" />&nbsp;	    
 	<a href="https://discord.com/api/oauth2/authorize?client_id=1094707713101021416&permissions=2150629376&scope=bot"><img height="28" src="./assets/invite-me.svg" /></a>&nbsp;
+    <img height="28" src="https://github.com/DustinDEV2more/DND-DC-Music-Bot/actions/workflows/dotnet.yml/badge.svg?branch=main&style=for-the-badge" />&nbsp;
 <br>
 </div>
 
