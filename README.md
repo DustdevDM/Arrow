@@ -12,4 +12,4 @@
 
 ---
 
-A Dungeons & Dragons music bot for Gamemasters that plays atmospheric music on command. With just one click of a button you can play your preconfigured music immediately or change the music played dynamically.
+A Dungeons & Dragons music bot. Made for Dungeon Masters that want to play atmospheric music on command. With just one click of a button you can play your preconfigured music immediately or change the music played dynamically.
