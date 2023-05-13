@@ -1,43 +1,32 @@
-﻿using Discord;
-using Discord.WebSocket;
-using DND_DC_Music_Bot;
+﻿using DND_DC_Music_Bot;
 using Ninject;
-using System.Diagnostics;
 
+/// <summary>
+/// Programm Entry.
+/// </summary>
 public class Program
 {
-    private DiscordSocketClient? client;
-
+    /// <summary>
+    /// Programm Entry.
+    /// </summary>
+    /// <param name="args">Arguments of Programm startup.</param>
+    /// <returns>Async Tasks.</returns>
     public static Task Main(string[] args) => new Program().MainAsync(args);
 
+    /// <summary>
+    /// Main Async Task.
+    /// </summary>
+    /// <param name="args">Arguments of Programm startup.</param>
+    /// <returns>Async Task.</returns>
     public async Task MainAsync(string[] args)
     {
-        //Initialize Ninject Dependecy Injection
+        // Initialize Ninject Dependecy Injection
         var kernel = new StandardKernel();
-        client = kernel.Get<DiscordSocketClient>();
 
-        //Check for .env file
-        if (args.Count() == 0) throw new ArgumentNullException("Missing .env Path Argument");
+        var bot = kernel.Get<Bot>();
 
-        //Load .env file
-        EnvLoader.Load(args[0]);
+        bot.LoadConfig(args);
 
-
-        client.Log += Log;
-
-        var token = Environment.GetEnvironmentVariable("DISCORDTOKEN");
-
-        //Login and connect to Discord.
-        await client.LoginAsync(TokenType.Bot, token);
-        await client.StartAsync();
-
-        // Block this task until the program is closed.
-        await Task.Delay(-1);
-    }
-
-    private Task Log(LogMessage msg)
-    {
-        Console.WriteLine(msg.ToString());
-        return Task.CompletedTask;
+        await bot.ExecuteBotAsync();
     }
 }
