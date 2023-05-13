@@ -1,5 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using DND_DC_Music_Bot.Modules.Services;
+using MongoDB.Driver;
 
 namespace DND_DC_Music_Bot
 {
@@ -13,13 +15,13 @@ namespace DND_DC_Music_Bot
         /// </summary>
         /// <param name="config">Instance of <see cref="Config"/>.</param>
         /// <param name="discordSocketClient">Instance of <see cref="DiscordSocketClient"/>.</param>
-        public Bot(Config config, DiscordSocketClient discordSocketClient)
+        public Bot(ConfigService config, DiscordSocketClient discordSocketClient)
         {
             this.Config = config;
             this.DiscordSocketClient = discordSocketClient;
         }
 
-        private Config Config { get; set; }
+        private ConfigService Config { get; set; }
 
         private DiscordSocketClient DiscordSocketClient { get; set; }
 
@@ -50,7 +52,7 @@ namespace DND_DC_Music_Bot
             // Check if argument was passeda at programm startup.
             if (args.Count() == 0)
             {
-                throw new ArgumentNullException("Missing .json FilePath Argument");
+                throw new ArgumentNullException(nameof(args), "Missing .json FilePath Argument");
             }
 
             this.Config.Loader(args[0]);

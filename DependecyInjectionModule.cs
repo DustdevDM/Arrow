@@ -1,4 +1,5 @@
 ﻿using Discord.WebSocket;
+using MongoDB.Driver;
 using Ninject;
 using Ninject.Modules;
 
