@@ -13,21 +13,29 @@ namespace DND_DC_Music_Bot
         /// <summary>
         /// Initializes a new instance of the <see cref="Config"/> class.
         /// </summary>
-        internal Config()
+        public Config()
         {
             this.discordToken = string.Empty;
             this.mongoDBConnectionString = string.Empty;
         }
 
         /// <summary>
-        /// Gets the Discord API Token used for establishing a connection to the Discord Bot Account.
+        /// Discord API Token used for establishing a connection to the Discord Bot Account.
         /// </summary>
-        internal string DiscordToken { get => this.discordToken; }
+        public string DiscordToken
+        {
+            get => this.discordToken;
+            set { this.discordToken = value; }
+        }
 
         /// <summary>
-        /// Gets the MongoDB Connection String used for establishing a connection to the MongoDB Database.
+        /// MongoDB Connection String used for establishing a connection to the MongoDB Database.
         /// </summary>
-        internal string MongoDBConnectionString { get => this.mongoDBConnectionString; }
+        public string MongoDBConnectionString
+        {
+            get => this.mongoDBConnectionString;
+            set { this.mongoDBConnectionString = value; }
+        }
 
         /// <summary>
         /// Loads the Configuration.json File and stores the Configdata in the Config Class.
@@ -53,17 +61,18 @@ namespace DND_DC_Music_Bot
             }
 
             // Deserialize the Configuration.json File.
-            Config? configdata = JsonConvert.DeserializeObject<Config>(configjson);
-
-            // Check if the Configuration.json File could be deserialized.
-            if (configdata == null)
+            try
             {
-                throw new NullReferenceException("The Configuration.json File could not be deserialized.");
-            }
+                Config? configdata = JsonConvert.DeserializeObject<Config>(configjson) ?? throw new NullReferenceException("The Configuration File could not be deserialized.");
 
-            // Store the Configdata in the Config Class.
-            this.discordToken = configdata.DiscordToken;
-            this.mongoDBConnectionString = configdata.MongoDBConnectionString;
+                // Store the Configdata in the Config Class.
+                this.discordToken = configdata.DiscordToken != string.Empty ? configdata.DiscordToken : throw new NullReferenceException(nameof(this.DiscordToken) + " is required data and was not found in the JSON file.");
+                this.mongoDBConnectionString = configdata.MongoDBConnectionString != string.Empty ? configdata.MongoDBConnectionString : throw new NullReferenceException(nameof(this.MongoDBConnectionString) + " is required data and was not found in the JSON file.");
+            }
+            catch (Exception ex)
+            {
+                throw new NullReferenceException("The Configuration.json File could not be deserialized.", ex);
+            }
         }
     }
 }
