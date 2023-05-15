@@ -1,19 +1,19 @@
 ﻿using Newtonsoft.Json;
 
-namespace DND_DC_Music_Bot
+namespace DND_DC_Music_Bot.Modules.Services
 {
     /// <summary>
     /// Configuration class used to Store and Retrieve Configdata from the Configuration.json File.
     /// </summary>
-    public class Config
+    public class ConfigService
     {
         private string discordToken;
         private string mongoDBConnectionString;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Config"/> class.
+        /// Initializes a new instance of the <see cref="ConfigService"/> class.
         /// </summary>
-        public Config()
+        public ConfigService()
         {
             this.discordToken = string.Empty;
             this.mongoDBConnectionString = string.Empty;
@@ -63,7 +63,7 @@ namespace DND_DC_Music_Bot
             // Deserialize the Configuration.json File.
             try
             {
-                Config? configdata = JsonConvert.DeserializeObject<Config>(configjson) ?? throw new NullReferenceException("The Configuration File could not be deserialized.");
+                ConfigService? configdata = JsonConvert.DeserializeObject<ConfigService>(configjson) ?? throw new NullReferenceException("The Configuration File could not be deserialized.");
 
                 // Store the Configdata in the Config Class.
                 this.discordToken = configdata.DiscordToken != string.Empty ? configdata.DiscordToken : throw new NullReferenceException(nameof(this.DiscordToken) + " is required data and was not found in the JSON file.");
