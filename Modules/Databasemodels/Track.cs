@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DND_DC_Music_Bot.Modules.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
@@ -13,29 +9,21 @@ namespace DND_DC_Music_Bot.Modules.Databasemodels
     /// A Track that can be played by the bot.
     /// </summary>
     [BsonIgnoreExtraElements]
-    public class Track
+    public class Track : ITrack
     {
-        /// <summary>
-        /// Internal Identifier set by MongoDB.
-        /// </summary>
+        /// <inheritdoc />
         [BsonId]
         public ObjectId Id { get; set; }
 
-        /// <summary>
-        /// The name of the track.
-        /// </summary>
+        /// <inheritdoc />
         [BsonElement("Name")]
         public string? Name { get; set; }
 
-        /// <summary>
-        /// The URI of the track.
-        /// </summary>
+        /// <inheritdoc />
         [BsonElement("Uri")]
         public string? Uri { get; set; }
 
-        /// <summary>
-        /// The Discord User ID of the user who added the track.
-        /// </summary>
+        /// <inheritdoc />
         [BsonElement("UserId")]
         public string? UserId { get; set; }
     }
