@@ -12,16 +12,16 @@ namespace DND_DC_Music_Bot
     public class Bot
     {
         private ConfigService config;
-        private SlashcommandService slashcommandService;
+        private SlashCommandService slashcommandService;
         private DiscordSocketClient discordSocketClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Bot"/> class.
         /// </summary>
         /// <param name="config">Instance of <see cref="ConfigService"/>.</param>
-        /// <param name="slashcommandService">Instance of <see cref="SlashcommandService"/></param>
+        /// <param name="slashcommandService">Instance of <see cref="SlashCommandService"/></param>
         /// <param name="discordSocketClient">Instance of <see cref="DiscordSocketClient"/>.</param>
-        public Bot(ConfigService config, SlashcommandService slashcommandService, DiscordSocketClient discordSocketClient)
+        public Bot(ConfigService config, SlashCommandService slashcommandService, DiscordSocketClient discordSocketClient)
         {
             this.config = config;
             this.slashcommandService = slashcommandService;
@@ -33,6 +33,8 @@ namespace DND_DC_Music_Bot
         /// </summary>
         internal async Task ExecuteBotAsync()
         {
+            this.discordSocketClient = new DiscordSocketClient(new DiscordSocketConfig() { UseInteractionSnowflakeDate = false});
+
             this.discordSocketClient.Log += this.Log;
 
             var token = this.config.DiscordToken;
@@ -41,12 +43,16 @@ namespace DND_DC_Music_Bot
             await this.discordSocketClient.LoginAsync(TokenType.Bot, token);
             await this.discordSocketClient.StartAsync();
 
+            //Register Slashcommands after the bot is connected.
             this.discordSocketClient.Ready += () =>
             {
                 Console.WriteLine("Bot is connected!");
-                SlashcommandService.ImportAndRegisterCommands(this.discordSocketClient);
+                SlashCommandService.ImportAndRegisterCommands(this.discordSocketClient);
                 return Task.CompletedTask;
             };
+
+            // Handle Slashcommands.
+            this.discordSocketClient.SlashCommandExecuted += SlashCommandService.HandleSlashCommand;
 
             // Block this task until the program is closed.
             await Task.Delay(-1);
