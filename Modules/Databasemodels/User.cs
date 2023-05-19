@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DND_DC_Music_Bot.Modules.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
@@ -13,17 +9,13 @@ namespace DND_DC_Music_Bot.Modules.Databasemodels
     /// A User that stands for a Discord User.
     /// </summary>
     [BsonIgnoreExtraElements]
-    public class User
+    public class User : IUser
     {
-        /// <summary>
-        /// Internal Identifier set by MongoDB.
-        /// </summary>
+        /// <inheritdoc />
         [BsonId]
         public ObjectId InternalId { get; set; }
 
-        /// <summary>
-        /// Identifier of the Discord User set by Discord.
-        /// </summary>
+        /// <inheritdoc />
         [BsonElement("Id")]
         public string? DiscordId { get; set; }
     }

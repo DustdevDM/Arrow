@@ -1,7 +1,5 @@
 ﻿using Discord.WebSocket;
 using DND_DC_Music_Bot.Modules.Services;
-using MongoDB.Driver;
-using Ninject;
 using Ninject.Modules;
 
 namespace DND_DC_Music_Bot
