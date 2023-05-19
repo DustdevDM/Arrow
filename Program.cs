@@ -11,7 +11,7 @@ public class Program
     /// </summary>
     /// <param name="args">Arguments of Programm startup.</param>
     /// <returns>Async Tasks.</returns>
-    public static Task Main(string[] args) => new Program().MainAsync(args);
+    public static Task Main(string[] args) => MainAsync(args);
 
     /// <summary>
     /// Main Async Task.
