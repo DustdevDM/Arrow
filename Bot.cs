@@ -11,33 +11,42 @@ namespace DND_DC_Music_Bot
     /// </summary>
     public class Bot
     {
+        private ConfigService config;
+        private SlashcommandService slashcommandService;
+        private DiscordSocketClient discordSocketClient;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Bot"/> class.
         /// </summary>
-        /// <param name="config">Instance of <see cref="Config"/>.</param>
+        /// <param name="config">Instance of <see cref="ConfigService"/>.</param>
+        /// <param name="slashcommandService">Instance of <see cref="SlashcommandService"/></param>
         /// <param name="discordSocketClient">Instance of <see cref="DiscordSocketClient"/>.</param>
-        public Bot(ConfigService config, DiscordSocketClient discordSocketClient)
+        public Bot(ConfigService config, SlashcommandService slashcommandService, DiscordSocketClient discordSocketClient)
         {
-            this.Config = config;
-            this.DiscordSocketClient = discordSocketClient;
+            this.config = config;
+            this.slashcommandService = slashcommandService;
+            this.discordSocketClient = discordSocketClient;
         }
-
-        private ConfigService Config { get; set; }
-
-        private DiscordSocketClient DiscordSocketClient { get; set; }
 
         /// <summary>
         /// Executes the bot. Loads the config, logs in and connects to Discord.
         /// </summary>
         internal async Task ExecuteBotAsync()
         {
-            this.DiscordSocketClient.Log += this.Log;
+            this.discordSocketClient.Log += this.Log;
 
-            var token = this.Config.DiscordToken;
+            var token = this.config.DiscordToken;
 
             // Login and connect to Discord.
-            await this.DiscordSocketClient.LoginAsync(TokenType.Bot, token);
-            await this.DiscordSocketClient.StartAsync();
+            await this.discordSocketClient.LoginAsync(TokenType.Bot, token);
+            await this.discordSocketClient.StartAsync();
+
+            this.discordSocketClient.Ready += () =>
+            {
+                Console.WriteLine("Bot is connected!");
+                this.slashcommandService.ImportAndRegisterCommands(this.discordSocketClient);
+                return Task.CompletedTask;
+            };
 
             // Block this task until the program is closed.
             await Task.Delay(-1);
@@ -56,7 +65,7 @@ namespace DND_DC_Music_Bot
                 throw new ArgumentNullException(nameof(args), "Missing .json FilePath Argument");
             }
 
-            this.Config.Loader(args[0]);
+            this.config.Loader(args[0]);
         }
 
         private Task Log(LogMessage msg)
