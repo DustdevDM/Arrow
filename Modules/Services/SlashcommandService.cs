@@ -1,19 +1,63 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using DND_DC_Music_Bot.Modules.Interfaces;
+using Newtonsoft.Json;
 
 namespace DND_DC_Music_Bot.Modules.Services
 {
     /// <summary>
     /// Service to Import and Register Slashcommands to the Discord API.
     /// </summary>
-    public class SlashcommandService
+    public class SlashCommandService
     {
+        /// <summary>
+        /// Handles any triggered Slashcommand.
+        /// </summary>
+        /// <param name="socketSlashCommand">Instance of <see cref="SocketSlashCommand"/></param>
+        /// <returns></returns>
+        public static async Task HandleSlashCommand(SocketSlashCommand socketSlashCommand)
+        {
+            await socketSlashCommand.DeferAsync();
+
+            // Get Slashcommand from Namespace
+            string nspace = "DND_DC_Music_Bot.Modules.Classes.Commands";
+            IEnumerable<Type> slashCommands = Assembly.GetExecutingAssembly().GetTypes()
+                                            .Where(t => t.Namespace == nspace && t.GetInterfaces().Contains(typeof(ISlashCommand)));
+
+            Type? slashCommand = slashCommands.FirstOrDefault(x =>
+            {
+                ISlashCommand? slashCommandInstance = Activator.CreateInstance(x) as ISlashCommand;
+                if (slashCommandInstance?.Name == socketSlashCommand.Data.Name)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
+
+            if (slashCommand == null)
+            {
+                await socketSlashCommand.FollowupAsync("Failed to find Slashcommand");
+                return;
+            }
+
+            ISlashCommand? slashCommandInstance = Activator.CreateInstance(slashCommand) as ISlashCommand;
+            if (slashCommandInstance == null)
+            {
+                await socketSlashCommand.FollowupAsync("Failed to create Instance of Slashcommand");
+                return;
+            }
+        }
+
         /// <summary>
         /// Import and Register all Slashcommands that are within the ".Modules.Classes.Commands" Namespace.
         /// </summary>
-        public static async void ImportAndRegisterCommands(DiscordSocketClient discordSocketClient)
+        public static void ImportAndRegisterCommands(DiscordSocketClient discordSocketClient)
         {
             string nspace = "DND_DC_Music_Bot.Modules.Classes.Commands";
 
@@ -34,20 +78,21 @@ namespace DND_DC_Music_Bot.Modules.Services
                 slashCommandAPIInstance.WithName(slashCommandInstance.Name);
                 slashCommandAPIInstance.WithDescription(slashCommandInstance.Description);
 
-                await discordSocketClient.CreateGlobalApplicationCommandAsync(slashCommandAPIInstance.Build());
+                PushCommandtoAPI(discordSocketClient, slashCommandAPIInstance);
             }
         }
 
-        /// <summary>
-        /// Import and Register all Slashcommands that are within the ".Modules.Classes.Commands" Namespace.
-        /// </summary>
-        public static async void RegisterCommand(DiscordSocketClient discordSocketClient, ISlashCommand slashCommand)
+        private static async void PushCommandtoAPI(DiscordSocketClient discordSocketClient, SlashCommandBuilder slashCommand)
         {
-            SlashCommandBuilder slashCommandAPIInstance = new();
-            slashCommandAPIInstance.WithName(slashCommand.Name);
-            slashCommandAPIInstance.WithDescription(slashCommand.Description);
-
-            await discordSocketClient.CreateGlobalApplicationCommandAsync(slashCommandAPIInstance.Build());
+            try
+            {
+                await discordSocketClient.CreateGlobalApplicationCommandAsync(slashCommand.Build());
+            }
+            catch (HttpException exception)
+            {
+                var json = JsonConvert.SerializeObject(exception.Errors.First(), Formatting.Indented);
+                Console.WriteLine(json);
+            }
         }
     }
 }
