@@ -1,25 +1,26 @@
-﻿using Discord;
+﻿using System.Reflection;
+using Discord;
 using Discord.WebSocket;
 using DND_DC_Music_Bot.Modules.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DND_DC_Music_Bot.Modules.Services
 {
+    /// <summary>
+    /// Service to Import and Register Slashcommands to the Discord API.
+    /// </summary>
     public class SlashcommandService
     {
-        public async void ImportAndRegisterCommands(DiscordSocketClient discordSocketClient)
+        /// <summary>
+        /// Import and Register all Slashcommands that are within the ".Modules.Classes.Commands" Namespace.
+        /// </summary>
+        public static async void ImportAndRegisterCommands(DiscordSocketClient discordSocketClient)
         {
             string nspace = "DND_DC_Music_Bot.Modules.Classes.Commands";
 
-            var slashCommands = Assembly.GetExecutingAssembly().GetTypes()
+            IEnumerable<Type> slashCommands = Assembly.GetExecutingAssembly().GetTypes()
                                 .Where(t => t.Namespace == nspace && t.GetInterfaces().Contains(typeof(ISlashCommand)));
 
-            foreach (var slashCommand in slashCommands)
+            foreach (Type slashCommand in slashCommands)
             {
                 ISlashCommand? slashCommandInstance = Activator.CreateInstance(slashCommand) as ISlashCommand;
 
@@ -29,13 +30,24 @@ namespace DND_DC_Music_Bot.Modules.Services
                     continue;
                 }
 
-                var slashCommandAPIInstance = new SlashCommandBuilder();
+                SlashCommandBuilder slashCommandAPIInstance = new();
                 slashCommandAPIInstance.WithName(slashCommandInstance.Name);
                 slashCommandAPIInstance.WithDescription(slashCommandInstance.Description);
 
                 await discordSocketClient.CreateGlobalApplicationCommandAsync(slashCommandAPIInstance.Build());
-
             }
+        }
+
+        /// <summary>
+        /// Import and Register all Slashcommands that are within the ".Modules.Classes.Commands" Namespace.
+        /// </summary>
+        public static async void RegisterCommand(DiscordSocketClient discordSocketClient, ISlashCommand slashCommand)
+        {
+            SlashCommandBuilder slashCommandAPIInstance = new();
+            slashCommandAPIInstance.WithName(slashCommand.Name);
+            slashCommandAPIInstance.WithDescription(slashCommand.Description);
+
+            await discordSocketClient.CreateGlobalApplicationCommandAsync(slashCommandAPIInstance.Build());
         }
     }
 }

@@ -18,7 +18,7 @@ public class Program
     /// </summary>
     /// <param name="args">Arguments of Programm startup.</param>
     /// <returns>Async Task.</returns>
-    public async Task MainAsync(string[] args)
+    public static async Task MainAsync(string[] args)
     {
         // Initialize Ninject Dependecy Injection
         var kernel = new StandardKernel();

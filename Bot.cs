@@ -44,7 +44,7 @@ namespace DND_DC_Music_Bot
             this.discordSocketClient.Ready += () =>
             {
                 Console.WriteLine("Bot is connected!");
-                this.slashcommandService.ImportAndRegisterCommands(this.discordSocketClient);
+                SlashcommandService.ImportAndRegisterCommands(this.discordSocketClient);
                 return Task.CompletedTask;
             };
 

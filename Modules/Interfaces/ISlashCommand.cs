@@ -6,26 +6,29 @@ using System.Threading.Tasks;
 
 namespace DND_DC_Music_Bot.Modules.Interfaces
 {
+    /// <summary>
+    /// Interface for Slash Commands.
+    /// </summary>
     public interface ISlashCommand
     {
         /// <summary>
-        /// The Name of the Slash Command
+        /// The Name of the Slash Command.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// The Description of the Slash Command
+        /// The Description of the Slash Command.
         /// </summary>
         public string Description { get; }
 
         /// <summary>
-        /// A Function to Validate that the Command can be Executed
+        /// A Function to Validate that the Command can be Executed.
         /// </summary>
         /// <returns></returns>
         public Task<bool> Validate();
 
         /// <summary>
-        /// A Function to Execute the Command
+        /// A Function to Execute the Command.
         /// </summary>
         /// <returns></returns>
         public Task Execute();
