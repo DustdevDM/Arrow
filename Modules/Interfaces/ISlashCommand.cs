@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Discord.WebSocket;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,13 +25,11 @@ namespace DND_DC_Music_Bot.Modules.Interfaces
         /// <summary>
         /// A Function to Validate that the Command can be Executed.
         /// </summary>
-        /// <returns></returns>
-        public Task<bool> Validate();
+        public Task<bool> Validate(SocketSlashCommand socketSlashCommand);
 
         /// <summary>
         /// A Function to Execute the Command.
         /// </summary>
-        /// <returns></returns>
-        public Task Execute();
+        public Task Execute(SocketSlashCommand socketSlashCommand);
     }
 }

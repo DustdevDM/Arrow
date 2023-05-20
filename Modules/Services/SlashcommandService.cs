@@ -52,6 +52,19 @@ namespace DND_DC_Music_Bot.Modules.Services
                 await socketSlashCommand.FollowupAsync("Failed to create Instance of Slashcommand");
                 return;
             }
+
+            try
+            {
+                Console.WriteLine($"[{nameof(SlashCommandService)}] Starts execution of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.");
+                await slashCommandInstance.Validate(socketSlashCommand);
+                await slashCommandInstance.Execute(socketSlashCommand);
+                Console.WriteLine($"[{nameof(SlashCommandService)}] End execution of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"[{nameof(SlashCommandService)}] Cought Exception while executing of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.\n{exception.Message}");
+                await socketSlashCommand.FollowupAsync(exception.Message);
+            }
         }
 
         /// <summary>
@@ -70,7 +83,7 @@ namespace DND_DC_Music_Bot.Modules.Services
 
                 if (slashCommandInstance == null)
                 {
-                    Console.WriteLine("Failed to create Instance of Slashcommand");
+                    Console.WriteLine($"[{nameof(SlashCommandService)}] Failed to create Instance of Slashcommand");
                     continue;
                 }
 
@@ -86,12 +99,13 @@ namespace DND_DC_Music_Bot.Modules.Services
         {
             try
             {
+                Console.WriteLine($"[{nameof(SlashCommandService)}] Pushing \"{slashCommand.Name}\" to Discord API");
                 await discordSocketClient.CreateGlobalApplicationCommandAsync(slashCommand.Build());
             }
             catch (HttpException exception)
             {
                 var json = JsonConvert.SerializeObject(exception.Errors.First(), Formatting.Indented);
-                Console.WriteLine(json);
+                Console.WriteLine($"[{nameof(SlashCommandService)}] Caught Exception while pushing SlashCommand to Discord:\n{json}");
             }
         }
     }

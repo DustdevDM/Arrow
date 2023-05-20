@@ -19,7 +19,7 @@ namespace DND_DC_Music_Bot
         /// Initializes a new instance of the <see cref="Bot"/> class.
         /// </summary>
         /// <param name="config">Instance of <see cref="ConfigService"/>.</param>
-        /// <param name="slashcommandService">Instance of <see cref="SlashCommandService"/></param>
+        /// <param name="slashcommandService">Instance of <see cref="SlashCommandService"/>.</param>
         /// <param name="discordSocketClient">Instance of <see cref="DiscordSocketClient"/>.</param>
         public Bot(ConfigService config, SlashCommandService slashcommandService, DiscordSocketClient discordSocketClient)
         {
@@ -29,13 +29,16 @@ namespace DND_DC_Music_Bot
         }
 
         /// <summary>
-        /// Executes the bot. Loads the config, logs in and connects to Discord.
+        /// Executes the bot. Loads the config. Login and connects to Discord.
         /// </summary>
-        internal async Task ExecuteBotAsync()
+        internal async Task ExecuteBotAsync(bool enableDCLogs)
         {
             this.discordSocketClient = new DiscordSocketClient(new DiscordSocketConfig() { UseInteractionSnowflakeDate = false});
 
-            this.discordSocketClient.Log += this.Log;
+            if (enableDCLogs)
+            {
+                this.discordSocketClient.Log += this.Log;
+            }
 
             var token = this.config.DiscordToken;
 
@@ -53,30 +56,21 @@ namespace DND_DC_Music_Bot
 
             // Handle Slashcommands.
             this.discordSocketClient.SlashCommandExecuted += SlashCommandService.HandleSlashCommand;
-
-            // Block this task until the program is closed.
-            await Task.Delay(-1);
         }
 
         /// <summary>
         /// Loads the config from the given file path.
         /// </summary>
-        /// <param name="args">Programm startup Arguments.</param>
+        /// <param name="configFilePath">Filepath to configuration File.</param>
         /// <exception cref="ArgumentNullException">Thrown if no argument was passed at programm startup.</exception>
-        internal void LoadConfig(string[] args)
+        internal void LoadConfig(string configFilePath)
         {
-            // Check if argument was passeda at programm startup.
-            if (args.Count() == 0)
-            {
-                throw new ArgumentNullException(nameof(args), "Missing .json FilePath Argument");
-            }
-
-            this.config.Loader(args[0]);
+            this.config.Loader(configFilePath);
         }
 
         private Task Log(LogMessage msg)
         {
-            Console.WriteLine(msg.ToString());
+            Console.WriteLine($"[{nameof(Discord)}] {msg.Message}");
             return Task.CompletedTask;
         }
     }
