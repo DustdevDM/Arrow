@@ -10,57 +10,66 @@ namespace DND_DC_Music_Bot
     /// </summary>
     public class Bot
     {
+        private ConfigService config;
+        private SlashCommandService slashcommandService;
+        private DiscordSocketClient discordSocketClient;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Bot"/> class.
         /// </summary>
-        /// <param name="config">Instance of <see cref="Config"/>.</param>
+        /// <param name="config">Instance of <see cref="ConfigService"/>.</param>
+        /// <param name="slashcommandService">Instance of <see cref="SlashCommandService"/>.</param>
         /// <param name="discordSocketClient">Instance of <see cref="DiscordSocketClient"/>.</param>
-        public Bot(ConfigService config, DiscordSocketClient discordSocketClient)
+        public Bot(ConfigService config, SlashCommandService slashcommandService, DiscordSocketClient discordSocketClient)
         {
-            this.Config = config;
-            this.DiscordSocketClient = discordSocketClient;
+            this.config = config;
+            this.slashcommandService = slashcommandService;
+            this.discordSocketClient = discordSocketClient;
         }
 
-        private ConfigService Config { get; set; }
-
-        private DiscordSocketClient DiscordSocketClient { get; set; }
-
         /// <summary>
-        /// Executes the bot. Loads the config, logs in and connects to Discord.
+        /// Executes the bot. Loads the config. Login and connects to Discord.
         /// </summary>
-        internal async Task ExecuteBotAsync()
+        internal async Task ExecuteBotAsync(bool enableDCLogs)
         {
-            this.DiscordSocketClient.Log += this.Log;
+            this.discordSocketClient = new DiscordSocketClient(new DiscordSocketConfig() { UseInteractionSnowflakeDate = false});
 
-            var token = this.Config.DiscordToken;
+            if (enableDCLogs)
+            {
+                this.discordSocketClient.Log += this.Log;
+            }
+
+            var token = this.config.DiscordToken;
 
             // Login and connect to Discord.
-            await this.DiscordSocketClient.LoginAsync(TokenType.Bot, token);
-            await this.DiscordSocketClient.StartAsync();
+            await this.discordSocketClient.LoginAsync(TokenType.Bot, token);
+            await this.discordSocketClient.StartAsync();
 
-            // Block this task until the program is closed.
-            await Task.Delay(-1);
+            //Register Slashcommands after the bot is connected.
+            this.discordSocketClient.Ready += () =>
+            {
+                Console.WriteLine("Bot is connected!");
+                SlashCommandService.ImportAndRegisterCommands(this.discordSocketClient);
+                return Task.CompletedTask;
+            };
+
+            // Handle Slashcommands.
+            this.discordSocketClient.SlashCommandExecuted += SlashCommandService.HandleSlashCommand;
         }
 
         /// <summary>
         /// Loads the config from the given file path.
         /// </summary>
-        /// <param name="args">Programm startup Arguments.</param>
+        /// <param name="configFilePath">Filepath to configuration File.</param>
         /// <exception cref="ArgumentNullException">Thrown if no argument was passed at programm startup.</exception>
-        internal void LoadConfig(string[] args)
+        internal void LoadConfig(string configFilePath)
         {
-            // Check if argument was passeda at programm startup.
-            if (args.Count() == 0)
-            {
-                throw new ArgumentNullException(nameof(args), "Missing .json FilePath Argument");
-            }
-
-            this.Config.Loader(args[0]);
+            this.config.Loader(configFilePath);
         }
 
         private Task Log(LogMessage msg)
         {
-            Console.WriteLine(msg.ToString());
+            Console.WriteLine($"[{nameof(Discord)}] {msg.Message}");
             return Task.CompletedTask;
         }
     }

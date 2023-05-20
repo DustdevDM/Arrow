@@ -15,7 +15,7 @@ namespace DND_DC_Music_Bot
         public override void Load()
         {
             this.Bind<ConfigService>().ToSelf().InSingletonScope();
-            this.Bind<DiscordSocketClient>().ToSelf();
+            this.Bind<SlashCommandService>().ToSelf();
         }
     }
 }
