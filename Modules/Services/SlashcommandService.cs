@@ -55,10 +55,16 @@ namespace DND_DC_Music_Bot.Modules.Services
 
             try
             {
-                Console.WriteLine($"[{nameof(SlashCommandService)}] Starts execution of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.");
-                await slashCommandInstance.Validate(socketSlashCommand);
+                Console.WriteLine($"[{nameof(SlashCommandService)}] Start execution of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.");
+                bool validationResukt = await slashCommandInstance.Validate(socketSlashCommand);
+                if (validationResukt)
+                {
                 await slashCommandInstance.Execute(socketSlashCommand);
                 Console.WriteLine($"[{nameof(SlashCommandService)}] End execution of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.");
+                } else
+                {
+                    Console.WriteLine($"[{nameof(SlashCommandService)}] Cancel execution due to negative validation result of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.");
+                }
             }
             catch (Exception exception)
             {
