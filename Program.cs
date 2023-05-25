@@ -1,7 +1,5 @@
-﻿using CommandLine.Text;
-using CommandLine;
+﻿using CommandLine;
 using DND_DC_Music_Bot;
-using Newtonsoft.Json;
 using Ninject;
 
 /// <summary>

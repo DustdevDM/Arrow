@@ -1,9 +1,4 @@
 ﻿using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DND_DC_Music_Bot.Modules.Interfaces
 {
@@ -21,6 +16,11 @@ namespace DND_DC_Music_Bot.Modules.Interfaces
         /// The Description of the Slash Command.
         /// </summary>
         public string Description { get; }
+
+        /// <summary>
+        /// A List of Options for the Slash Command.
+        /// </summary>
+        public SocketSlashCommandDataOption[] Options { get; }
 
         /// <summary>
         /// A Function to Validate that the Command can be Executed.

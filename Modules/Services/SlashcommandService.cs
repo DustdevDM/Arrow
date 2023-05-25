@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;

@@ -1,5 +1,4 @@
-﻿using Discord.WebSocket;
-using DND_DC_Music_Bot.Modules.Services;
+﻿using DND_DC_Music_Bot.Modules.Services;
 using Ninject.Modules;
 
 namespace DND_DC_Music_Bot

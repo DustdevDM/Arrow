@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using DND_DC_Music_Bot.Modules.Services;
-using MongoDB.Driver;
 
 namespace DND_DC_Music_Bot
 {
