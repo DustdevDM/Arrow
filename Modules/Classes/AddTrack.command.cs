@@ -12,17 +12,13 @@ namespace DND_DC_Music_Bot.Modules.Classes.Commands
 
         public SlashCommandOptionBuilder[] Options => new SlashCommandOptionBuilder[]
         {
-            new SlashCommandOptionBuilder()
-            {
-            Type = ApplicationCommandOptionType.SubCommandGroup,
-            Name = "operation",
-            Description = "The operation to perform.",
-            },
+            new SlashCommandOptionBuilder().WithName("add").WithDescription("Add a Track").WithType(ApplicationCommandOptionType.SubCommand),
+            new SlashCommandOptionBuilder().WithName("remove").WithDescription("Remove a Track").WithType(ApplicationCommandOptionType.SubCommand),
         };
 
         public Task Execute(SocketSlashCommand socketSlashCommand)
         {
-            socketSlashCommand.FollowupAsync("You used the " + socketSlashCommand.Data.Name + " option");
+            socketSlashCommand.FollowupAsync("You used the " + socketSlashCommand.Data.Options.First().Name + " option");
             return Task.CompletedTask;
         }
 
