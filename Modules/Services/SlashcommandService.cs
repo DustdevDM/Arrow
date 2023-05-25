@@ -95,6 +95,7 @@ namespace DND_DC_Music_Bot.Modules.Services
                 SlashCommandBuilder slashCommandAPIInstance = new();
                 slashCommandAPIInstance.WithName(slashCommandInstance.Name);
                 slashCommandAPIInstance.WithDescription(slashCommandInstance.Description);
+                slashCommandAPIInstance.AddOptions(slashCommandInstance.Options);
 
                 PushCommandtoAPI(discordSocketClient, slashCommandAPIInstance);
             }
