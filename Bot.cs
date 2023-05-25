@@ -29,7 +29,7 @@ namespace DND_DC_Music_Bot
         /// <summary>
         /// Executes the bot. Loads the config. Login and connects to Discord.
         /// </summary>
-        internal async Task ExecuteBotAsync(bool enableDCLogs)
+        internal async Task ExecuteBotAsync(bool enableDCLogs, bool rebuildSlashcommands)
         {
             this.discordSocketClient = new DiscordSocketClient(new DiscordSocketConfig() { UseInteractionSnowflakeDate = false});
 
@@ -47,6 +47,11 @@ namespace DND_DC_Music_Bot
             //Register Slashcommands after the bot is connected.
             this.discordSocketClient.Ready += () =>
             {
+                if (rebuildSlashcommands)
+                {
+                    SlashCommandService.ClearCommands(this.discordSocketClient);
+                }
+
                 Console.WriteLine("Bot is connected!");
                 SlashCommandService.ImportAndRegisterCommands(this.discordSocketClient);
                 return Task.CompletedTask;

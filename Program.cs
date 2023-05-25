@@ -30,7 +30,7 @@ public class Program
             .WithParsed<Options>(async o =>
             {
                 bot.LoadConfig(o.ConfigFilePath ?? throw new ArgumentNullException(nameof(o.ConfigFilePath)));
-                await bot.ExecuteBotAsync(o.EnableDiscordNETLogs);
+                await bot.ExecuteBotAsync(o.EnableDiscordNETLogs, o.RebuildSlashCommands);
             }).WithNotParsed<Options>(e =>
             {
                 Environment.Exit(0);
@@ -56,5 +56,11 @@ public class Program
         /// </summary>
         [Option("enabledclog", Required = false, Default = true, HelpText = "Set option to enable the Discord.Net output")]
         public bool EnableDiscordNETLogs { get; set; }
+
+        /// <summary>
+        /// Rebuild Discord Slash Commands.
+        /// </summary>
+        [Option("rebuildcommands", Required = false, HelpText = "Set option to clear Discord API slashcommand list and rebuild it from scratch on startup.")]
+        public bool RebuildSlashCommands { get; set; }
     }
 }

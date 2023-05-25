@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.ObjectModel;
+using System.Reflection;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
@@ -98,6 +99,28 @@ namespace DND_DC_Music_Bot.Modules.Services
                 slashCommandAPIInstance.AddOptions(slashCommandInstance.Options);
 
                 PushCommandtoAPI(discordSocketClient, slashCommandAPIInstance);
+            }
+        }
+
+        /// <summary>
+        /// Clear all Slashcommands from the Discord API.
+        /// </summary>
+        public static async void ClearCommands(DiscordSocketClient discordSocketClient)
+        {
+            IReadOnlyCollection<SocketApplicationCommand> socketApplicationCommands = await discordSocketClient.GetGlobalApplicationCommandsAsync();
+
+            foreach (SocketApplicationCommand socketApplicationCommand in socketApplicationCommands)
+            {
+                try
+                {
+                    Console.WriteLine($"[{nameof(SlashCommandService)}] Removing \"{socketApplicationCommand.Name}\" from Discord API");
+                    await socketApplicationCommand.DeleteAsync();
+                }
+                catch (HttpException exception)
+                {
+                    var json = JsonConvert.SerializeObject(exception.Errors.First(), Formatting.Indented);
+                    Console.WriteLine($"[{nameof(SlashCommandService)}] Caught Exception while removing SlashCommand from Discord:\n{json}");
+                }
             }
         }
 

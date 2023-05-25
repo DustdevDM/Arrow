@@ -2,7 +2,7 @@
   "profiles": {
     "DND-DC-Music-Bot": {
       "commandName": "Project",
-      "commandLineArgs": "-c \"D:\\Coding\\Projects\\DND-DC-Music-Bot\\config.json\""
+      "commandLineArgs": "-c \"D:\\Coding\\Projects\\DND-DC-Music-Bot\\config.json\" --rebuildcommands true"
     }
   }
 }
