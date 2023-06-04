@@ -61,7 +61,8 @@ namespace DND_DC_Music_Bot.Modules.Services
                 {
                 await slashCommandInstance.Execute(socketSlashCommand);
                 Console.WriteLine($"[{nameof(SlashCommandService)}] End execution of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.");
-                } else
+                } 
+                else
                 {
                     Console.WriteLine($"[{nameof(SlashCommandService)}] Cancel execution due to negative validation result of \"{slashCommandInstance.Name}\" which was ordered by user \"{socketSlashCommand.User.Username}\"({socketSlashCommand.User.Id}) on the \"{socketSlashCommand.Channel.Name}\"({socketSlashCommand.ChannelId}) channel.");
                 }
