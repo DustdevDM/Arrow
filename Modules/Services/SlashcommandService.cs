@@ -98,14 +98,16 @@ namespace DND_DC_Music_Bot.Modules.Services
                 slashCommandAPIInstance.WithDescription(slashCommandInstance.Description);
                 slashCommandAPIInstance.AddOptions(slashCommandInstance.Options);
 
-                PushCommandtoAPI(discordSocketClient, slashCommandAPIInstance);
+                await PushCommandtoAPI(discordSocketClient, slashCommandAPIInstance);
             }
+
+            return;
         }
 
         /// <summary>
         /// Clear all Slashcommands from the Discord API.
         /// </summary>
-        public static async void ClearCommands(DiscordSocketClient discordSocketClient)
+        public static async Task ClearCommands(DiscordSocketClient discordSocketClient)
         {
             IReadOnlyCollection<SocketApplicationCommand> socketApplicationCommands = await discordSocketClient.GetGlobalApplicationCommandsAsync();
 
@@ -115,6 +117,7 @@ namespace DND_DC_Music_Bot.Modules.Services
                 {
                     Console.WriteLine($"[{nameof(SlashCommandService)}] Removing \"{socketApplicationCommand.Name}\" from Discord API");
                     await socketApplicationCommand.DeleteAsync();
+                    return;
                 }
                 catch (HttpException exception)
                 {
@@ -124,12 +127,13 @@ namespace DND_DC_Music_Bot.Modules.Services
             }
         }
 
-        private static async void PushCommandtoAPI(DiscordSocketClient discordSocketClient, SlashCommandBuilder slashCommand)
+        private static async Task PushCommandtoAPI(DiscordSocketClient discordSocketClient, SlashCommandBuilder slashCommand)
         {
             try
             {
                 Console.WriteLine($"[{nameof(SlashCommandService)}] Pushing \"{slashCommand.Name}\" to Discord API");
                 await discordSocketClient.CreateGlobalApplicationCommandAsync(slashCommand.Build());
+                return;
             }
             catch (HttpException exception)
             {
