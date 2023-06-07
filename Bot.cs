@@ -1,6 +1,9 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using DND_DC_Music_Bot.Modules.Classes;
 using DND_DC_Music_Bot.Modules.Services;
+using Lavalink4NET;
+using Lavalink4NET.DiscordNet;
 
 namespace DND_DC_Music_Bot
 {
@@ -12,6 +15,8 @@ namespace DND_DC_Music_Bot
         private ConfigService config;
         private SlashCommandService slashcommandService;
         private DiscordSocketClient discordSocketClient;
+        private IAudioService audioService;
+        private readonly Logger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Bot"/> class.
@@ -19,11 +24,13 @@ namespace DND_DC_Music_Bot
         /// <param name="config">Instance of <see cref="ConfigService"/>.</param>
         /// <param name="slashcommandService">Instance of <see cref="SlashCommandService"/>.</param>
         /// <param name="discordSocketClient">Instance of <see cref="DiscordSocketClient"/>.</param>
-        public Bot(ConfigService config, SlashCommandService slashcommandService, DiscordSocketClient discordSocketClient)
+        public Bot(ConfigService config, SlashCommandService slashcommandService, DiscordSocketClient discordSocketClient, IAudioService audioService, Logger logger)
         {
             this.config = config;
             this.slashcommandService = slashcommandService;
             this.discordSocketClient = discordSocketClient;
+            this.audioService = audioService;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -31,8 +38,6 @@ namespace DND_DC_Music_Bot
         /// </summary>
         internal async Task ExecuteBotAsync(bool enableDCLogs, bool rebuildSlashcommands)
         {
-            this.discordSocketClient = new DiscordSocketClient(new DiscordSocketConfig() { UseInteractionSnowflakeDate = false, GatewayIntents = GatewayIntents.GuildVoiceStates});
-
             if (enableDCLogs)
             {
                 this.discordSocketClient.Log += this.Log;
@@ -47,18 +52,25 @@ namespace DND_DC_Music_Bot
             //Register Slashcommands after the bot is connected.
             this.discordSocketClient.Ready += async () =>
             {
-                if (rebuildSlashcommands)
+                try
                 {
-                    await SlashCommandService.ClearCommands(this.discordSocketClient);
+                    if (rebuildSlashcommands)
+                    {
+                        await this.slashcommandService.ClearCommands(this.discordSocketClient);
+                    }
+
+                    await this.slashcommandService.ImportAndRegisterCommands(this.discordSocketClient);
+
+                    await this.audioService.InitializeAsync();
+
+                    this.discordSocketClient.SlashCommandExecuted += this.slashcommandService.HandleSlashCommand;
+                    return;
                 }
-
-                await SlashCommandService.ImportAndRegisterCommands(this.discordSocketClient);
-
-                return;
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             };
-
-            // Handle Slashcommands.
-            this.discordSocketClient.SlashCommandExecuted += SlashCommandService.HandleSlashCommand;
         }
 
         /// <summary>
@@ -73,7 +85,7 @@ namespace DND_DC_Music_Bot
 
         private Task Log(LogMessage msg)
         {
-            Console.WriteLine($"[{nameof(Discord)}] {msg.Message}");
+            this.logger.Log(nameof(Discord), msg.Message);
             return Task.CompletedTask;
         }
     }

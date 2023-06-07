@@ -22,7 +22,7 @@ public class Program
     public static async Task MainAsync(string[] args)
     {
         // Initialize Ninject Dependecy Injection
-        var kernel = new StandardKernel();
+        var kernel = new StandardKernel(new DependecyInjectionModule());
 
         var bot = kernel.Get<Bot>();
 
