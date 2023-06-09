@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using DND_DC_Music_Bot.Modules.Databasemodels;
 using DND_DC_Music_Bot.Modules.Interfaces;
 using Lavalink4NET;
 using Lavalink4NET.Player;
@@ -60,7 +61,12 @@ namespace DND_DC_Music_Bot.Modules.Classes.Commands
                 return;
             }
 
-            await socketSlashCommand.FollowupAsync("Track added: " + myTrack.Uri);
+            Track track = new Track()
+            {
+                Name = myTrack.Title,
+                Uri = myTrack.Uri.ToString(),
+                UserId = socketSlashCommand.User.Id.ToString(),
+            };
 
         }
 
